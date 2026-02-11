@@ -6,6 +6,10 @@ export interface AutoEntity {
 export interface WizardState {
   //: Служебная информация
   stepIndex: number;
+  onSubstep: boolean;
+
+  isSubmitting: boolean;
+  submitStatus: 'success' | 'fail';
 
   //: Конкретная информация об авто
   brand: AutoEntity | null;
@@ -19,21 +23,26 @@ export interface WizardState {
 }
 
 export type SpecificAutoProperty =
-  | "brand"
-  | "model"
-  | "generation"
-  | "configuration"
-  | "modification";
+  | 'brand'
+  | 'model'
+  | 'generation'
+  | 'configuration'
+  | 'modification';
 
 export interface WizardActions {
   setStepIndex: (step: number) => void;
   handleNextStep: () => void;
   handlePrevStep: () => void;
+  handleClose: () => void;
+  handleExitSubstep: () => void;
+  handleSubmit: () => Promise<void>;
+  handleReset: () => void;
 
   setSpecificAutoProperty: (
     prop: SpecificAutoProperty,
     value: AutoEntity | null,
   ) => void;
 
+  updateState: (updates: Partial<WizardState>) => void;
   resetState: () => void;
 }

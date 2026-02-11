@@ -10,13 +10,17 @@
 .iconContainer {
   width: 64px;
   height: 64px;
-  background-color: var(--tgui--accent_text_color);
+  background-color: var(--tg-theme-button-color);
   color: #fff;
   border-radius: 50%;
 
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.failIconContainer {
+  background-color: var(--tg-theme-destructive-text-color);
 }
 
 .description {

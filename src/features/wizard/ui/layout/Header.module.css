@@ -1,9 +1,9 @@
 .header {
   padding: 20px;
-  padding-top: calc(20px + var(--tgui--safe-area-before, 0px));
 
   display: flex;
   flex-direction: column;
+
   gap: 12px;
 }
 
@@ -25,13 +25,13 @@
 .progressBarContainer {
   height: 4px;
   width: 100%;
-  background-color: var(--tgui--secondary_bg_color);
+  background-color: var(--secondary-bg-color);
   border-radius: 2px;
   overflow: hidden;
 }
 
 .progressBar {
   height: 100%;
-  background-color: var(--tgui--button_color, blue);
+  background-color: var(--tg-theme-button-color);
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -1,24 +1,30 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 import type {
   AutoEntity,
   SpecificAutoProperty,
   WizardActions,
   WizardState,
-} from "./types";
-import { STEPS_CONFIG } from "./stepsConfig";
+} from './types';
+import { STEPS_CONFIG } from './stepsConfig';
+import { tma } from '@/tma';
+import { autoApi } from '../api/autoApi';
 
 const SPECIFIC_AUTO_PROPERTIES_HIERARCHY: SpecificAutoProperty[] = [
-  "brand",
-  "model",
-  "generation",
-  "configuration",
-  "modification",
+  'brand',
+  'model',
+  'generation',
+  'configuration',
+  'modification',
 ];
 
 export const useWizardStore = create<WizardState & WizardActions>(
   (set, get) => ({
     //: Состояние
     stepIndex: 0,
+    onSubstep: false,
+
+    isSubmitting: false,
+    submitStatus: 'fail',
 
     //: Авто
     brand: null,
@@ -47,6 +53,34 @@ export const useWizardStore = create<WizardState & WizardActions>(
         set({ stepIndex: stepIndex - 1 });
       }
     },
+    handleClose: () => {
+      tma.close();
+    },
+    handleExitSubstep: () => {
+      set({ onSubstep: false });
+    },
+    handleSubmit: async () => {
+      const store = get();
+
+      try {
+        set({ isSubmitting: true });
+        await autoApi.postApplication();
+        set({ submitStatus: 'success' });
+        tma.hapticSuccess();
+      } catch (err) {
+        set({ submitStatus: 'fail' });
+        console.log(err);
+        tma.hapticError();
+      } finally {
+        set({ isSubmitting: false });
+        store.handleNextStep();
+      }
+    },
+    handleReset: () => {
+      const state = get();
+      state.resetState();
+      state.setStepIndex(1);
+    },
 
     setSpecificAutoProperty: (
       prop: SpecificAutoProperty,
@@ -63,9 +97,17 @@ export const useWizardStore = create<WizardState & WizardActions>(
         return { ...state, ...updates };
       }),
 
+    updateState: (updates: Partial<WizardState>) =>
+      set((state) => ({ ...state, ...updates })),
+
     resetState: () =>
       set({
         stepIndex: 0,
+        onSubstep: false,
+
+        isSubmitting: false,
+        submitStatus: 'fail',
+
         brand: null,
         model: null,
         generation: null,

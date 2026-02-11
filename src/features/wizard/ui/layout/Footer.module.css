@@ -1,6 +1,6 @@
 .footer {
-  padding: 20px;
-  padding-bottom: 40px;
+  padding: 10px 20px 0 20px;
+  padding-bottom: max(var(--bottom-inset, 0px), 10px);
 
   display: flex;
   justify-content: center;
@@ -12,6 +12,12 @@
   display: flex;
   gap: 10px;
   max-width: 600px;
+}
+
+.nextButton {
+  flex-grow: 1;
+  flex-basis: 0;
+  background-color: var(--tg-theme-button-color) !important;
 }
 
 .button {

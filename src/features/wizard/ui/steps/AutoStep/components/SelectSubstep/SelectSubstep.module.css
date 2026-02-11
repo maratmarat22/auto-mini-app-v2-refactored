@@ -1,0 +1,23 @@
+.clearCell {
+  background-color: var(--tg-theme-destructive-text-color);
+  border-radius: 10px;
+}
+
+.clearCell:hover {
+  background-color: #c62828 !important;
+}
+
+.list {
+  width: 100%;
+  padding: 15px !important;
+  border-radius: 10px;
+}
+
+.cell:nth-child(even) {
+  background-color: var(--secondary-bg-color);
+}
+
+.cell {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}

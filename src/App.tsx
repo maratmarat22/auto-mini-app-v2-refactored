@@ -1,4 +1,4 @@
-import { Wizard } from "./features/wizard";
+import { Wizard } from './features/wizard';
 
 function App() {
   return <Wizard />;

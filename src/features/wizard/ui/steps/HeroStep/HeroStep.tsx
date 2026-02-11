@@ -1,9 +1,9 @@
-import { Text, Placeholder } from "@telegram-apps/telegram-ui";
-import { motion } from "framer-motion";
+import { Text, Headline } from '@telegram-apps/telegram-ui';
+import { motion } from 'framer-motion';
 
-import carGif from "./assets/hero-car.gif";
+import logo from './assets/logo.png';
 
-import styles from "./HeroStep.module.css";
+import styles from './HeroStep.module.css';
 
 export const HeroStep = () => {
   return (
@@ -14,19 +14,11 @@ export const HeroStep = () => {
       transition={{ duration: 0.5 }}
     >
       <div className={styles.content}>
-        {/* Иконка или иллюстрация */}
-        <Placeholder
-          description="Подберем идеальный автомобиль под ваш бюджет за 3 шага"
-          header="Найди авто своей мечты"
-        >
-          <img
-            alt="Telegram sticker"
-            src={carGif} // Тут можно вставить стикер или иконку авто
-            style={{ width: 256, height: 256 }}
-          />
-        </Placeholder>
+        <img alt="logo" src={logo} style={{ width: 256, height: 256 }} />
 
-        {/* Список преимуществ */}
+        <Headline className="text" weight="1">
+          Найди авто своей мечты
+        </Headline>
         <div className={styles.features}>
           <motion.div
             className={styles.featureItem}
@@ -35,7 +27,7 @@ export const HeroStep = () => {
             transition={{ delay: 0.3 }}
           >
             <span className={styles.icon}>⚡️</span>
-            <Text>Быстрый поиск по 50+ дилерам</Text>
+            <Text className="text">Быстрый поиск по 50+ дилерам</Text>
           </motion.div>
 
           <motion.div
@@ -45,7 +37,7 @@ export const HeroStep = () => {
             transition={{ delay: 0.4 }}
           >
             <span className={styles.icon}>🛡️</span>
-            <Text>Только проверенные объявления</Text>
+            <Text className="text">Только проверенные объявления</Text>
           </motion.div>
         </div>
       </div>

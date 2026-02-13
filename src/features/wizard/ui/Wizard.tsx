@@ -1,43 +1,31 @@
-import type React from 'react';
-import {
-  STEPS_CONFIG,
-  WIZARD_STEP,
-  type WizardStepId,
-} from '../model/stepsConfig';
+import { STEPS_CONFIG, WIZARD_STEP } from '../model/stepsConfig';
 import styles from './Wizard.module.css';
 import { WizardFooter } from './layout/Footer';
 import { WizardHeader } from './layout/Header';
-import { HeroStep } from './steps/HeroStep/HeroStep';
 import { useWizardStore } from '../model/store';
 import { StepContainer } from './steps/StepContainer';
-import { CommentStep } from './steps/CommentStep/CommentStep';
-import { BudgetCityStep } from './steps/BudgetCityStep/BudgetCityStep';
-import { AutoStep } from './steps/AutoStep/AutoStep';
-
-const STEP_COMPONENTS: Record<WizardStepId, React.FC> = {
-  [WIZARD_STEP.HERO]: HeroStep,
-  [WIZARD_STEP.AUTO]: AutoStep,
-  [WIZARD_STEP.COMMENT]: CommentStep,
-  [WIZARD_STEP.BUDGETCITY]: BudgetCityStep,
-  [WIZARD_STEP.SUBMIT]: HeroStep,
-  [WIZARD_STEP.STATUS]: HeroStep,
-};
+import { STEP_COMPONENTS } from './config';
 
 export const Wizard = () => {
-  const { stepIndex, submitStatus } = useWizardStore();
+  const stepIndex = useWizardStore((state) => state.stepIndex);
+  const submitStatus = useWizardStore((state) => state.submitStatus);
+
   const stepSchema = STEPS_CONFIG[stepIndex];
   const StepComponent = STEP_COMPONENTS[stepSchema.id];
 
-  let stepIcon = stepSchema.icon;
-  let stepTitle = stepSchema.title;
-  let stepDescription = stepSchema.description;
-  let failOccured = false;
-  if (stepSchema.id === WIZARD_STEP.STATUS && submitStatus === 'fail') {
-    stepIcon = stepSchema.iconAlt ?? stepSchema.icon;
-    stepTitle = stepSchema.titleAlt ?? stepSchema.title;
-    stepDescription = stepSchema.descriptionAlt ?? stepSchema.description;
-    failOccured = true;
-  }
+  const failOccured =
+    stepSchema.id === WIZARD_STEP.STATUS && submitStatus === 'fail';
+  const stepProps = {
+    icon: failOccured
+      ? (stepSchema.iconAlt ?? stepSchema.icon)
+      : stepSchema.icon,
+    title: failOccured
+      ? (stepSchema.titleAlt ?? stepSchema.title)
+      : stepSchema.title,
+    description: failOccured
+      ? (stepSchema.descriptionAlt ?? stepSchema.description)
+      : stepSchema.description,
+  };
 
   return (
     <div className={styles.wizardLayout}>
@@ -47,14 +35,14 @@ export const Wizard = () => {
         </div>
 
         <div className={styles.mainContainer}>
-          {stepSchema.id === WIZARD_STEP.HERO ? (
-            <HeroStep />
+          {stepSchema.unique ? (
+            <StepComponent />
           ) : (
             <StepContainer
-              icon={stepIcon}
+              icon={stepProps.icon}
+              title={stepProps.title}
+              description={stepProps.description}
               failOccured={failOccured}
-              title={stepTitle}
-              description={stepDescription}
             >
               <StepComponent />
             </StepContainer>

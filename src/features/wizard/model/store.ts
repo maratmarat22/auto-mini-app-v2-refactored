@@ -1,40 +1,45 @@
 import { create } from 'zustand';
-import type {
-  AutoEntity,
-  SpecificAutoProperty,
-  WizardActions,
-  WizardState,
-} from './types';
 import { STEPS_CONFIG } from './stepsConfig';
-import { tma } from '@/tma';
 import { autoApi } from '../api/autoApi';
+import {
+  isSpecificAutoProperty,
+  SPECIFIC_AUTO_PROPERTIES_HIERARCHY,
+  type SpecificAutoProperty,
+} from './types/specificAutoProperty';
+import { isAutoEntity, type AutoEntity } from './types/autoEntity';
+import type { WizardActions, WizardState } from './types/store';
+import { mapStateToApplication } from './types/application';
+import { tma } from '@/shared/lib/tma';
 
-const SPECIFIC_AUTO_PROPERTIES_HIERARCHY: SpecificAutoProperty[] = [
-  'brand',
-  'model',
-  'generation',
-  'configuration',
-  'modification',
-];
+const initialState: WizardState = {
+  stepIndex: 0,
+  onSubstep: false,
+  lastActionClear: false,
+  isSubmitting: false,
+  submitStatus: 'fail',
+
+  brand: null,
+  model: null,
+  generation: null,
+  configuration: null,
+  modification: null,
+
+  bodyType: null,
+  engineType: null,
+  engineDisplacement: null,
+  enginePower: null,
+  gearType: null,
+  transmission: null,
+  years: null,
+
+  comment: null,
+  budget: 0,
+  city: null,
+};
 
 export const useWizardStore = create<WizardState & WizardActions>(
   (set, get) => ({
-    //: Состояние
-    stepIndex: 0,
-    onSubstep: false,
-
-    isSubmitting: false,
-    submitStatus: 'fail',
-
-    //: Авто
-    brand: null,
-    model: null,
-    generation: null,
-    configuration: null,
-    modification: null,
-
-    budget: 0,
-    city: null,
+    ...initialState,
 
     //: Actions
     setStepIndex: (stepIndex: number) => set({ stepIndex }),
@@ -62,15 +67,17 @@ export const useWizardStore = create<WizardState & WizardActions>(
     handleSubmit: async () => {
       const store = get();
 
+      if (store.isSubmitting) return;
+
       try {
         set({ isSubmitting: true });
-        await autoApi.postApplication();
+        await autoApi.postApplication(mapStateToApplication(store));
         set({ submitStatus: 'success' });
-        tma.hapticSuccess();
+        tma.hapticNotification('success');
       } catch (err) {
         set({ submitStatus: 'fail' });
         console.log(err);
-        tma.hapticError();
+        tma.hapticNotification('error');
       } finally {
         set({ isSubmitting: false });
         store.handleNextStep();
@@ -85,36 +92,38 @@ export const useWizardStore = create<WizardState & WizardActions>(
     setSpecificAutoProperty: (
       prop: SpecificAutoProperty,
       value: AutoEntity | null,
-    ) =>
+    ) => {
+      const index = SPECIFIC_AUTO_PROPERTIES_HIERARCHY.indexOf(prop);
+      const updates: Partial<WizardState> = { [prop]: value };
+
+      SPECIFIC_AUTO_PROPERTIES_HIERARCHY.slice(index + 1).forEach((p) => {
+        updates[p] = null;
+      });
+
+      return updates;
+    },
+
+    updateState: (updates: Partial<WizardState>) =>
       set((state) => {
-        const index = SPECIFIC_AUTO_PROPERTIES_HIERARCHY.indexOf(prop);
-        const updates: Partial<WizardState> = { [prop]: value };
+        const store = get();
+        const updatesAsEntries = Object.entries(updates) as [
+          keyof WizardState,
+          unknown,
+        ][];
 
-        SPECIFIC_AUTO_PROPERTIES_HIERARCHY.slice(index + 1).forEach((p) => {
-          updates[p] = null;
+        updatesAsEntries.forEach(([k, v]) => {
+          if (isSpecificAutoProperty(k)) {
+            if (isAutoEntity(v) || v === null) {
+              Object.assign(updates, store.setSpecificAutoProperty(k, v));
+            } else {
+              console.warn(`Expected AutoEntity for ${k}, got ${typeof v}`);
+              return;
+            }
+          }
         });
-
         return { ...state, ...updates };
       }),
 
-    updateState: (updates: Partial<WizardState>) =>
-      set((state) => ({ ...state, ...updates })),
-
-    resetState: () =>
-      set({
-        stepIndex: 0,
-        onSubstep: false,
-
-        isSubmitting: false,
-        submitStatus: 'fail',
-
-        brand: null,
-        model: null,
-        generation: null,
-        configuration: null,
-        modification: null,
-        budget: 0,
-        city: null,
-      }),
+    resetState: () => set(initialState),
   }),
 );

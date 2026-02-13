@@ -1,5 +1,5 @@
 .header {
-  max-width: 600px;
+  max-width: 80%;
 
   display: flex;
   flex-direction: column;
@@ -25,4 +25,5 @@
 
 .description {
   color: var(--tgui--subtitle_text_color);
+  text-align: center;
 }

@@ -1,5 +1,6 @@
 import axios from 'axios';
-import type { AutoEntity } from '../model/types';
+import type { AutoEntity } from '../model/types/autoEntity';
+import type { Application } from '../model/types/application';
 
 const instance = axios.create({
   baseURL: 'https://prod.akhmy.space/webhook/api',
@@ -32,5 +33,23 @@ export const autoApi = {
       })
       .then((res) => res.data),
 
-  postApplication: () => instance.post('applications'),
+  getBodyTypes: () =>
+    instance.get<AutoEntity[]>('body-types').then((res) => res.data),
+  getEngineTypes: () =>
+    instance
+      .get<AutoEntity[]>('engine-types')
+      .then((res) => normalizeEntities(res.data)),
+  getGearTypes: () =>
+    instance
+      .get<AutoEntity[]>('gear-types')
+      .then((res) => normalizeEntities(res.data)),
+  getTransmissions: () =>
+    instance
+      .get<AutoEntity[]>('transmissions')
+      .then((res) => normalizeEntities(res.data)),
+
+  postApplication: (data: Application) => instance.post('applications', data),
 };
+
+const normalizeEntities = (entities: AutoEntity[]) =>
+  entities.map((e) => ({ id: String(e.id), name: e.name }));

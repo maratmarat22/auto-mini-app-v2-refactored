@@ -17,7 +17,7 @@ export const WizardFooter = () => {
     handleExitSubstep,
     handleSubmit,
     handleReset,
-    onSubstep,
+    onSubstep: onSubstep,
     submitStatus,
   } = useWizardStore();
   const stepSchema = STEPS_CONFIG[stepIndex];

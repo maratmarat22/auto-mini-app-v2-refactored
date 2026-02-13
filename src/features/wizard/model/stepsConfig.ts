@@ -31,6 +31,8 @@ export type NextButtonAction = 'next' | 'submit' | 'exit';
 interface StepSchema {
   id: WizardStepId;
 
+  unique: boolean;
+
   headerTitle: string;
 
   icon: LucideIcon;
@@ -60,6 +62,8 @@ export const STEPS_CONFIG: StepSchema[] = [
   {
     id: WIZARD_STEP.HERO,
 
+    unique: true,
+
     headerTitle: 'Ход конём',
 
     icon: ChessKnight,
@@ -79,9 +83,12 @@ export const STEPS_CONFIG: StepSchema[] = [
 
     headerTitle: 'Авто',
 
+    unique: false,
+
     icon: CarFront,
-    title: 'Авто',
-    description: 'Авто',
+    title: 'Выберите автомобиль',
+    description:
+      'Укажите марку, модель и другие конкретные данные, либо введите характеристики',
 
     prevButtonVisible: true,
     nextButtonVisible: true,
@@ -95,11 +102,13 @@ export const STEPS_CONFIG: StepSchema[] = [
   {
     id: WIZARD_STEP.COMMENT,
 
+    unique: false,
+
     headerTitle: 'Комментарий',
 
     icon: MessageSquareMore,
-    title: 'Комментарий',
-    description: 'Комментарий',
+    title: 'Напишите комментарий',
+    description: 'Уточните дополнительные данные об авто, например, пробег',
 
     prevButtonVisible: true,
     nextButtonVisible: true,
@@ -113,11 +122,14 @@ export const STEPS_CONFIG: StepSchema[] = [
   {
     id: WIZARD_STEP.BUDGETCITY,
 
+    unique: false,
+
     headerTitle: 'Бюджет и город',
 
     icon: Wallet,
-    title: 'Бюджет и город',
-    description: 'Бюджет и город',
+    title: 'Укажите Ваш бюджет и город',
+    description:
+      'Уточните ваш бюджет и город, чтобы мы нашли предложения поблизости',
 
     prevButtonVisible: true,
     nextButtonVisible: true,
@@ -131,11 +143,13 @@ export const STEPS_CONFIG: StepSchema[] = [
   {
     id: WIZARD_STEP.SUBMIT,
 
+    unique: false,
+
     headerTitle: 'Отправка',
 
     icon: MailQuestionMark,
     title: 'Отправляем?',
-    description: 'Отправляем?',
+    description: 'Проверьте данные, это финальный шаг перед публикацией',
 
     prevButtonVisible: true,
     nextButtonVisible: true,
@@ -148,6 +162,8 @@ export const STEPS_CONFIG: StepSchema[] = [
   },
   {
     id: WIZARD_STEP.STATUS,
+
+    unique: false,
 
     headerTitle: 'Результат',
 

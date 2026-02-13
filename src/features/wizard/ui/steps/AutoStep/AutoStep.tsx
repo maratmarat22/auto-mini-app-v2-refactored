@@ -1,93 +1,75 @@
 import { Menu } from './components/Menu/Menu';
-import { useState } from 'react';
-import type { AutoStepTab } from './types';
-import { SpecificMenu } from './components/Menu/SpecificMenu';
 import { useWizardStore } from '@/features/wizard/model/store';
 import { SelectSubstep } from './components/SelectSubstep/SelectSubstep';
-import { useAutoQueries } from './hooks/useAutoQueries';
-import { SPECIFIC_AUTO_SUBSTEPS_CONFIG } from './substepsConfig';
-import type { AutoEntity } from '@/features/wizard/model/types';
+import { useAutoQueries } from '../../../hooks/useAutoQueries';
 import { Spinner } from '@telegram-apps/telegram-ui';
-
-export type AutoSelectSubstep =
-  | 'brand'
-  | 'model'
-  | 'generation'
-  | 'configuration'
-  | 'modification'
-  | null;
-
-function isAutoEntityArray(x: unknown): x is AutoEntity[] {
-  return (
-    Array.isArray(x) &&
-    x.every(
-      (item) =>
-        typeof item === 'object' &&
-        item !== null &&
-        'id' in item &&
-        'name' in item &&
-        typeof item.id === 'string' &&
-        typeof item.name === 'string',
-    )
-  );
-}
-
-function isBoolean(x: unknown): x is boolean {
-  return typeof x === 'boolean';
-}
+import { SUBSTEPS_CONFIG } from '../../../model/AutoSubstepsConfig';
+import { useMenu } from '../../../hooks/useMenu';
+import type { AutoState } from '@/features/wizard/model/types/store';
+import { useCallback, useMemo } from 'react';
+import { useAutoState } from '../../../hooks/useAutoState';
+import { isAutoSelectSubstepConfig } from '@/features/wizard/model/types/AutoSubstepConfigs/select';
+import { isAutoEntityArray } from '@/features/wizard/model/types/autoEntity';
 
 export const AutoStep = () => {
-  const store = useWizardStore();
-  const [activeTab, setActiveTab] = useState<AutoStepTab>('specific');
-  const [currentSubstep, setCurrentSubstep] = useState<AutoSelectSubstep>(null);
-  const handleTabChange = (tab: AutoStepTab) => {
-    setActiveTab(tab);
-  };
-  const handleButtonClick = (substep: AutoSelectSubstep) => {
-    store.updateState({ onSubstep: true });
-    setCurrentSubstep(substep);
-  };
-  const autoQueries = useAutoQueries();
+  const onSubstep = useWizardStore((store) => store.onSubstep);
+  const updateState = useWizardStore((store) => store.updateState);
+  const autoState: AutoState = useAutoState();
 
-  if (store.onSubstep && currentSubstep) {
-    const config = SPECIFIC_AUTO_SUBSTEPS_CONFIG.find(
-      (c) => c.substep === currentSubstep,
-    );
+  const menu = useMenu();
+  const queries = useAutoQueries();
 
-    if (!config) return null;
+  const config = SUBSTEPS_CONFIG.find((c) => c.prop === menu.substep);
 
-    const isLoading = autoQueries[config.loadingKey];
-    if (!isBoolean(isLoading)) return;
+  const mappedOptions = useMemo(() => {
+    if (!onSubstep || !isAutoSelectSubstepConfig(config)) return [];
+
+    const options = queries[config.dataKey];
+    if (!isAutoEntityArray(options)) return [];
+
+    return options.map((o) => ({
+      value: o.id,
+      label: o.name,
+      loweredLabel: o.name.toLowerCase(),
+    }));
+  }, [onSubstep, config, queries]);
+
+  const handleClear = useCallback(() => {
+    if (!isAutoSelectSubstepConfig(config)) return;
+
+    updateState({
+      [config.prop]: null,
+      lastActionClear: true,
+    });
+
+    menu.handleSubstepChange(null);
+  }, [config, updateState, menu]);
+
+  const handleSelect = useCallback(
+    (newValue: { value: string; label: string }) => {
+      if (!isAutoSelectSubstepConfig(config)) return;
+
+      updateState({
+        [config.prop]: { id: newValue.value, name: newValue.label },
+        onSubstep: false,
+        lastActionClear: false,
+      });
+      menu.handleSubstepChange(null);
+    },
+    [config, updateState, menu],
+  );
+
+  if (onSubstep) {
+    if (!isAutoSelectSubstepConfig(config)) return null;
+
+    const isLoading = queries[config.loadingKey];
     if (isLoading) {
-      console.log('loading');
       return <Spinner size="l" />;
     }
 
-    const options = autoQueries[config.optionsKey];
-    if (!isAutoEntityArray(options)) return;
-
-    const handleSelect = (newValue: { value: string; label: string }) => {
-      store.setSpecificAutoProperty(currentSubstep, {
-        id: newValue.value,
-        name: newValue.label,
-      });
-
-      store.updateState({ onSubstep: false });
-      setCurrentSubstep(null);
-    };
-    const handleClear = () => {
-      store.setSpecificAutoProperty(currentSubstep, null);
-      store.updateState({ onSubstep: false });
-      setCurrentSubstep(null);
-    };
-
     return (
       <SelectSubstep
-        options={(options as AutoEntity[]).map((o) => ({
-          value: o.id,
-          label: o.name,
-          loweredLabel: o.name.toLowerCase(),
-        }))}
+        options={mappedOptions}
         header={config.header}
         placeholder={config.placeholder}
         onClear={handleClear}
@@ -97,11 +79,11 @@ export const AutoStep = () => {
   }
 
   return (
-    <>
-      <Menu activeTab={activeTab} onTabChange={handleTabChange} />
-      {activeTab === 'specific' ? (
-        <SpecificMenu onButtonClick={handleButtonClick} state={store} />
-      ) : null}
-    </>
+    <Menu
+      substepGroup={menu.substepGroup}
+      onSubstepGroupChange={menu.handleSubstepGroupChange}
+      auto={autoState}
+      onSubstepChange={menu.handleSubstepChange}
+    />
   );
 };

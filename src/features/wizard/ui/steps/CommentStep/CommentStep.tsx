@@ -1,8 +1,13 @@
+import { useWizardStore } from '@/features/wizard/model/store';
 import { Textarea } from '@telegram-apps/telegram-ui';
 
 export const CommentStep = () => {
+  const { comment, updateState } = useWizardStore();
+
   return (
     <Textarea
+      value={comment ?? ''}
+      onChange={(e) => updateState({ comment: e.target.value })}
       header="Комментарий"
       placeholder="Введите комментарий..."
       cols={30}

@@ -1,6 +1,6 @@
 .footer {
   padding: 10px 20px 0 20px;
-  padding-bottom: max(var(--bottom-inset, 0px), 10px);
+  padding-bottom: max(var(--tg-viewport-safe-area-inset-bottom, 0px), 10px);
 
   display: flex;
   justify-content: center;

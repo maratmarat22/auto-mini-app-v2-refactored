@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     visualizer({ open: true, gzipSize: true, filename: 'stats.html' }),
   ],
-  // base: '/auto-mini-app-v2-refactored/',
+  base: '/auto-mini-app-v2-refactored/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

@@ -26,9 +26,11 @@
   color: var(--tgui--section_header_text_color);
 }
 
-.groupsSlider {
+.groups {
   width: 100% !important;
   height: fit-content !important;
+  background-color: var(--tertiary-bg-color) !important;
+  --tgui--segmented_control_active_bg: var(--tg-theme-button-color) !important;
 }
 
 .buttonsContainer {

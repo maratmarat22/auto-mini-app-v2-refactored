@@ -1,6 +1,6 @@
-import type { AutoSelectSubstepConfig } from '@/features/wizard/model/types/AutoSubstepConfigs/select';
-import type { AutoState } from '@/features/wizard/model/types/store';
-import type { AutoRangeSubstepConfig } from './types/AutoSubstepConfigs/range';
+import type { AutoSelectSubstepConfig } from '@/features/wizard/model/configs/autoStep/types/select';
+import type { AutoState } from '@/features/wizard/model/store/types/store';
+import type { AutoRangeSubstepConfig } from './types/range';
 
 export const SUBSTEPS_CONFIG: (
   | AutoSelectSubstepConfig
@@ -146,6 +146,26 @@ export const SUBSTEPS_CONFIG: (
   },
   {
     group: 'abstract',
+    type: 'range',
+    prop: 'enginePower',
+
+    getButtonText: (auto: AutoState) => {
+      if (auto.engineDisplacement === null)
+        return 'Уточнить мощность двигателя';
+      if (auto.engineDisplacement.from === null && auto.engineDisplacement.to) {
+        return `До ${auto.engineDisplacement.to}`;
+      }
+      if (auto.engineDisplacement.from && auto.engineDisplacement.to === null) {
+        return `От ${auto.engineDisplacement.from}`;
+      }
+      return `${auto.engineDisplacement.from} — ${auto.engineDisplacement.to}`;
+    },
+    isFilled: (auto: AutoState) => !!auto.engineDisplacement,
+    disabled: (auto: AutoState) => !auto.engineType,
+    header: 'Мощность двигателя',
+  },
+  {
+    group: 'abstract',
     type: 'select',
     prop: 'gearType',
 
@@ -175,5 +195,23 @@ export const SUBSTEPS_CONFIG: (
 
     header: 'Поиск',
     placeholder: 'Например, ...',
+  },
+  {
+    group: 'abstract',
+    type: 'range',
+    prop: 'years',
+
+    getButtonText: (auto: AutoState) => {
+      if (auto.engineDisplacement === null) return 'Уточнить годы выпуска';
+      if (auto.engineDisplacement.from === null && auto.engineDisplacement.to) {
+        return `До ${auto.engineDisplacement.to}`;
+      }
+      if (auto.engineDisplacement.from && auto.engineDisplacement.to === null) {
+        return `От ${auto.engineDisplacement.from}`;
+      }
+      return `${auto.engineDisplacement.from} — ${auto.engineDisplacement.to}`;
+    },
+    isFilled: (auto: AutoState) => !!auto.engineDisplacement,
+    header: 'Годы выпуска',
   },
 ];

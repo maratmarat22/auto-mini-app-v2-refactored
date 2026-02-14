@@ -1,8 +1,8 @@
-import { STEPS_CONFIG, WIZARD_STEP } from '../model/stepsConfig';
+import { STEPS_CONFIG, WIZARD_STEP } from '../model/configs/stepsConfig';
 import styles from './Wizard.module.css';
 import { WizardFooter } from './layout/Footer';
 import { WizardHeader } from './layout/Header';
-import { useWizardStore } from '../model/store';
+import { useWizardStore } from '../model/store/store';
 import { StepContainer } from './steps/StepContainer';
 import { STEP_COMPONENTS } from './config';
 
@@ -12,6 +12,10 @@ export const Wizard = () => {
 
   const stepSchema = STEPS_CONFIG[stepIndex];
   const StepComponent = STEP_COMPONENTS[stepSchema.id];
+
+  const stepError = useWizardStore((state) =>
+    state.validateStep(stepSchema.id),
+  );
 
   const failOccured =
     stepSchema.id === WIZARD_STEP.STATUS && submitStatus === 'fail';
@@ -38,12 +42,23 @@ export const Wizard = () => {
           {stepSchema.unique ? (
             <StepComponent />
           ) : (
-            <StepContainer
-              icon={stepProps.icon}
-              title={stepProps.title}
-              description={stepProps.description}
-              failOccured={failOccured}
-            >
+            <StepContainer>
+              <StepContainer.Header
+                icon={stepProps.icon}
+                title={stepProps.title}
+                description={stepProps.description}
+                failOccured={failOccured}
+              />
+              <StepContainer.Hint
+                type={stepError ? 'error' : 'hint'}
+                text={
+                  stepError
+                    ? stepError
+                    : stepSchema.hint
+                      ? stepSchema.hint
+                      : null
+                }
+              />
               <StepComponent />
             </StepContainer>
           )}

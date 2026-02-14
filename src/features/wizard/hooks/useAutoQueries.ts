@@ -1,5 +1,5 @@
 import { autoApi } from '@/features/wizard/api/autoApi';
-import { useWizardStore } from '@/features/wizard/model/store';
+import { useWizardStore } from '@/features/wizard/model/store/store';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAutoState } from './useAutoState';
@@ -7,7 +7,7 @@ import type {
   AutoQueriesDataKey,
   AutoQueriesLoadingKey,
 } from '../model/types/autoQueriesKeys';
-import type { AutoEntity } from '../model/types/autoEntity';
+import type { AutoEntity } from '../model/store/types/entities';
 
 export const useAutoQueries = (): Record<
   AutoQueriesDataKey,

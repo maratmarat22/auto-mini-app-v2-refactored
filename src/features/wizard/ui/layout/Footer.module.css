@@ -14,13 +14,12 @@
   max-width: 600px;
 }
 
-.nextButton {
-  flex-grow: 1;
-  flex-basis: 0;
-  background-color: var(--tg-theme-button-color) !important;
-}
-
 .button {
   flex-grow: 1;
   flex-basis: 0;
+}
+
+.backButton {
+  background-color: var(--tertiary-bg-color) !important;
+  color: var(--tg-theme-text-color) !important;
 }

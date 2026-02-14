@@ -1,6 +1,5 @@
 import axios from 'axios';
-import type { AutoEntity } from '../model/types/autoEntity';
-import type { Application } from '../model/types/application';
+import type { Application, AutoEntity } from '../model/store/types/entities';
 
 const instance = axios.create({
   baseURL: 'https://prod.akhmy.space/webhook/api',

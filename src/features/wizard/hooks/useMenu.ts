@@ -1,15 +1,15 @@
 import { useState } from 'react';
-import { useWizardStore } from '@/features/wizard/model/store';
+import { useWizardStore } from '@/features/wizard/model/store/store';
 import type {
   AutoProp,
   AutoSubstepGroup,
-} from '../model/types/AutoSubstepConfigs/supportingTypes';
+  AutoSubstepType,
+} from '../model/configs/autoStep/types/supportingTypes';
 
 export const useMenu = () => {
   const updateState = useWizardStore((store) => store.updateState);
+  const substepGroup = useWizardStore((s) => s.autoSubstepGroup);
 
-  const [substepGroup, setSubstepGroup] =
-    useState<AutoSubstepGroup>('specific');
   const [substep, setSubstep] = useState<AutoProp | null>(null);
 
   const handleSubstepGroupChange = (newSubstepGroup: AutoSubstepGroup) => {
@@ -26,11 +26,17 @@ export const useMenu = () => {
       });
     }
 
-    setSubstepGroup(newSubstepGroup);
+    updateState({ autoSubstepGroup: newSubstepGroup });
   };
 
-  const handleSubstepChange = (substep: AutoProp | null) => {
-    updateState({ onSubstep: substep !== null });
+  const handleSubstepChange = (
+    substepType: AutoSubstepType,
+    substep: AutoProp | null,
+  ) => {
+    if (substepType === 'select')
+      updateState({ onSelectSubstep: substep !== null });
+    else if (substepType === 'range')
+      updateState({ onRangeSubstep: substep !== null });
     setSubstep(substep);
   };
 

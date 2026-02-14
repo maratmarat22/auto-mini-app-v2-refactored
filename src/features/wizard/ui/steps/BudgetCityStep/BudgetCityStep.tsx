@@ -3,7 +3,7 @@ import { RussianRuble } from 'lucide-react';
 import { BUDGET_PRESETS } from './presets';
 import styles from './BudgetCityStep.module.css';
 import { type ChangeEvent } from 'react';
-import { useWizardStore } from '@/features/wizard/model/store';
+import { useWizardStore } from '@/features/wizard/model/store/store';
 
 const budgetFormatter = new Intl.NumberFormat('ru-RU', {
   style: 'decimal',
@@ -28,10 +28,15 @@ export const BudgetCityStep = () => {
         type="text"
         inputMode="numeric"
         placeholder="Например, 1 500 000"
-        className="inputField"
+        className="input"
         after={<RussianRuble size={20} className={styles.rubleIcon} />}
         value={inputValue}
         onChange={handleChange}
+        onFocus={(e) => {
+          setTimeout(() => {
+            e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }, 600);
+        }}
       />
 
       <div className={styles.presetsContainer}>

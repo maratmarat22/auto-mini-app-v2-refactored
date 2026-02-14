@@ -1,5 +1,5 @@
-import { useWizardStore } from '@/features/wizard/model/store';
-import type { AutoState } from '@/features/wizard/model/types/store';
+import { useWizardStore } from '@/features/wizard/model/store/store';
+import type { AutoState } from '@/features/wizard/model/store/types/store';
 import { useShallow } from 'zustand/shallow';
 
 export const useAutoState = (): AutoState => {

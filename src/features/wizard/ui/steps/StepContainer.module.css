@@ -7,6 +7,10 @@
   gap: 10px;
 }
 
+.title {
+  text-align: center;
+}
+
 .iconContainer {
   width: 64px;
   height: 64px;
@@ -25,5 +29,14 @@
 
 .description {
   color: var(--tgui--subtitle_text_color);
+  text-align: center;
+}
+
+.hint,
+.error {
+  width: 80%;
+  background-color: var(--tertiary-bg-color);
+  padding: 10px 30px;
+  border-radius: 44px;
   text-align: center;
 }

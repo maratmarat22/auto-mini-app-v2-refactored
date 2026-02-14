@@ -1,5 +1,7 @@
-import type { AutoEntity, RangeEntity } from './autoEntity';
-import type { SpecificAutoProperty } from './specificAutoProperty';
+import type { AutoEntity, RangeEntity } from './entities';
+import type { SpecificAutoProperty } from '../../types/specificAutoProperty';
+import type { WizardStepId } from '../../configs/stepsConfig';
+import type { AutoSubstepGroup } from '../../configs/autoStep/types/supportingTypes';
 
 export interface AutoState {
   //: Конкретная информация об авто
@@ -22,7 +24,13 @@ export interface AutoState {
 export interface WizardState extends AutoState {
   //: Служебная информация
   stepIndex: number;
-  onSubstep: boolean;
+
+  onSelectSubstep: boolean;
+
+  rangeSubstepBuffer: RangeEntity<string | null> | null;
+  onRangeSubstep: boolean;
+
+  autoSubstepGroup: AutoSubstepGroup;
   lastActionClear: boolean;
   isSubmitting: boolean;
   submitStatus: 'success' | 'fail';
@@ -37,10 +45,13 @@ export interface WizardActions {
   setStepIndex: (step: number) => void;
   handleNextStep: () => void;
   handlePrevStep: () => void;
-  handleClose: () => void;
-  handleExitSubstep: () => void;
+  handleCloseApp: () => void;
+  handleCloseSubstep: () => void;
+  handleConfirmSubstep: () => void;
   handleSubmit: () => Promise<void>;
   handleReset: () => void;
+
+  validateStep: (stepId: WizardStepId) => string | null;
 
   setSpecificAutoProperty: (
     prop: SpecificAutoProperty,

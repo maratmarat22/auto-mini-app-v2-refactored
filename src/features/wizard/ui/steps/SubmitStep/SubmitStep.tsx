@@ -1,7 +1,7 @@
 import { List, Section, Cell } from '@telegram-apps/telegram-ui';
 
 import styles from './SubmitStep.module.css';
-import { useWizardStore } from '@/features/wizard/model/store';
+import { useWizardStore } from '@/features/wizard/model/store/store';
 
 export const SubmitStep = () => {
   const store = useWizardStore();

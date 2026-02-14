@@ -1,18 +1,19 @@
 import { Button, SegmentedControl, Text } from '@telegram-apps/telegram-ui';
 import styles from './Menu.module.css';
 import { Check, ChevronRight } from 'lucide-react';
-import { SUBSTEPS_CONFIG } from '../../../../../model/AutoSubstepsConfig';
-import type { AutoState } from '@/features/wizard/model/types/store';
+import type { AutoState } from '@/features/wizard/model/store/types/store';
 import type {
   AutoProp,
   AutoSubstepGroup,
-} from '@/features/wizard/model/types/AutoSubstepConfigs/supportingTypes';
+  AutoSubstepType,
+} from '@/features/wizard/model/configs/autoStep/types/supportingTypes';
+import { SUBSTEPS_CONFIG } from '@/features/wizard/model/configs/autoStep/autoSubstepsConfig';
 
 interface MenuProps {
   substepGroup: AutoSubstepGroup;
   onSubstepGroupChange: (newGroup: AutoSubstepGroup) => void;
   auto: AutoState;
-  onSubstepChange: (newProp: AutoProp) => void;
+  onSubstepChange: (substepType: AutoSubstepType, newProp: AutoProp) => void;
 }
 
 export const Menu = ({
@@ -62,7 +63,7 @@ export const Menu = ({
               after={
                 isFilled ? <Check size={20} /> : <ChevronRight size={20} />
               }
-              onClick={() => onSubstepChange(c.prop)}
+              onClick={() => onSubstepChange(c.type, c.prop)}
               size="l"
               mode={isFilled ? 'filled' : 'bezeled'}
               disabled={c.disabled ? c.disabled(auto) : false}

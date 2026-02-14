@@ -16,7 +16,7 @@
   flex-direction: column;
 
   overflow: hidden;
-  background-color: var(--bg-color);
+  background-color: var(--tg-theme-bg-color);
 }
 
 .headerContainer {
@@ -46,6 +46,10 @@
   flex-shrink: 0;
   width: 100%;
   background-color: var(--secondary-bg-color);
+
+  @media (max-height: var(--tg-viewport-stable-height)) {
+    display: none;
+  }
 }
 
 .failIcon {

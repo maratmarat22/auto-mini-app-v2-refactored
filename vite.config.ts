@@ -13,10 +13,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      react: 'preact/compat',
-      'react-dom/test-utils': 'preact/test-utils',
-      'react-dom': 'preact/compat',
-      'react/jsx-runtime': 'preact/jsx-runtime',
+      // react: 'preact/compat',
+      // 'react-dom/test-utils': 'preact/test-utils',
+      // 'react-dom': 'preact/compat',
+      // 'react/jsx-runtime': 'preact/jsx-runtime',
     },
   },
 });

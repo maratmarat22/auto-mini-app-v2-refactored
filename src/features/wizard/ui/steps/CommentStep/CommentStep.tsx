@@ -1,4 +1,4 @@
-import { useWizardStore } from '@/features/wizard/model/store';
+import { useWizardStore } from '@/features/wizard/model/store/store';
 import { Textarea } from '@telegram-apps/telegram-ui';
 
 export const CommentStep = () => {
@@ -12,15 +12,11 @@ export const CommentStep = () => {
       placeholder="Введите комментарий..."
       cols={30}
       rows={6}
-      className="inputField"
+      className="input"
       onFocus={(e) => {
-        // Ждем долю секунды, чтобы клавиатура успела начать открываться
         setTimeout(() => {
-          e.target.scrollIntoView({
-            behavior: 'smooth', // Плавная прокрутка
-            block: 'start', // Прокрутить до верхней границы экрана
-          });
-        }, 500);
+          e.target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 600);
       }}
     ></Textarea>
   );

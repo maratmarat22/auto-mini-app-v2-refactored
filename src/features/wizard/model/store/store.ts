@@ -1,19 +1,25 @@
 import { create } from 'zustand';
-import { STEPS_CONFIG } from './stepsConfig';
-import { autoApi } from '../api/autoApi';
+import { STEPS_CONFIG, type WizardStepId } from '../configs/stepsConfig';
+import { autoApi } from '../../api/autoApi';
 import {
   isSpecificAutoProperty,
   SPECIFIC_AUTO_PROPERTIES_HIERARCHY,
   type SpecificAutoProperty,
-} from './types/specificAutoProperty';
-import { isAutoEntity, type AutoEntity } from './types/autoEntity';
+} from '../types/specificAutoProperty';
+import { isAutoEntity, type AutoEntity } from './types/entities';
 import type { WizardActions, WizardState } from './types/store';
-import { mapStateToApplication } from './types/application';
+import { mapStateToApplication } from './types/entities';
 import { tma } from '@/shared/lib/tma';
+import { stepValidators } from './validators';
 
 const initialState: WizardState = {
   stepIndex: 0,
-  onSubstep: false,
+
+  onSelectSubstep: false,
+  rangeSubstepBuffer: { from: null, to: null },
+  onRangeSubstep: false,
+
+  autoSubstepGroup: 'specific',
   lastActionClear: false,
   isSubmitting: false,
   submitStatus: 'fail',
@@ -58,11 +64,14 @@ export const useWizardStore = create<WizardState & WizardActions>(
         set({ stepIndex: stepIndex - 1 });
       }
     },
-    handleClose: () => {
+    handleCloseApp: () => {
       tma.close();
     },
-    handleExitSubstep: () => {
-      set({ onSubstep: false });
+    handleCloseSubstep: () => {
+      set({ onSelectSubstep: false, onRangeSubstep: false });
+    },
+    handleConfirmSubstep: () => {
+      set({ onRangeSubstep: false });
     },
     handleSubmit: async () => {
       const store = get();
@@ -87,6 +96,12 @@ export const useWizardStore = create<WizardState & WizardActions>(
       const state = get();
       state.resetState();
       state.setStepIndex(1);
+    },
+
+    validateStep: (stepId: WizardStepId) => {
+      const validator = stepValidators[stepId];
+      if (!validator) return null;
+      return validator(get());
     },
 
     setSpecificAutoProperty: (

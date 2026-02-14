@@ -8,10 +8,21 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  --bg-color: #1e1e2a;
+  --tg-theme-button-color: #8774e1 !important;
+  --tg-theme-bg-color: #1e1e2a !important;
+  --tg-theme-text-color: #fff !important;
+  --tg-theme-section-header-text-color: var(--tg-theme-button-color) !important;
+  --tg-theme-accent-text-color: var(--tg-theme-button-color) !important;
+  --tg-theme-link-color: var(--tg-theme-button-color) !important;
+  --tgui--segmented_control_active_bg: orange;
+
+  --tertiary-bg-color: #3b3846;
+
+  --tg-theme-section-bg-color: var(--tertiary-bg-color) !important;
+
+  --outline: hsla(0, 0%, 100%, 0.1);
   --secondary-bg-color: #2a2736;
   --divider-color: rgba(150, 140, 255, 0.15);
-  --text-color: #fff;
   --input-bg-color: #16161f;
 }
 
@@ -35,28 +46,20 @@ body {
   width: 100%;
 }
 
-.themeProvider {
-  height: 100%;
-  width: 100%;
-  --tgui--bg_color: var(--bg-color) !important;
-  --tgui--text_color: var(--text-color) !important;
-  --tgui--button_text_color: var(--text-color) !important;
-  --tgui--plain_foreground: var(--text-color) !important;
-  --tgui--plain_background: #3b3846 !important;
-  --tg-theme-text-color: var(--text-color) !important;
-  --tg-theme-button-color: #8774e1;
-}
-
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
-html[platform='ios'] .inputField {
+html[platform='ios'] .input {
   background-color: var(--input-bg-color) !important;
 }
 
-.text {
-  color: var(--text-color);
+html:not([platform='ios']) .input {
+  box-shadow: 0 0 0 2px var(--outline) !important;
+}
+
+html:not([platform='ios']) .input:focus-within {
+  box-shadow: 0 0 0 2px var(--tg-theme-button-color) !important;
 }

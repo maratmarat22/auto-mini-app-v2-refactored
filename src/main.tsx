@@ -20,11 +20,9 @@ const queryClient = new QueryClient();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AppRoot platform={platform === 'ios' ? 'ios' : 'base'} className="appRoot">
-      <div className="themeProvider">
-        <QueryClientProvider client={queryClient}>
-          <App />
-        </QueryClientProvider>
-      </div>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
     </AppRoot>
   </StrictMode>,
 );

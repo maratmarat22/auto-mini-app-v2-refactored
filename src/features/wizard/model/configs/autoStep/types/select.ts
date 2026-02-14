@@ -3,7 +3,7 @@ import {
   isAutoQueriesLoadingKey,
   type AutoQueriesDataKey,
   type AutoQueriesLoadingKey,
-} from '../autoQueriesKeys';
+} from '../../../types/autoQueriesKeys';
 import { isAutoBaseSubstepConfig, type AutoBaseSubstepConfig } from './base';
 import { isSelectableAutoProp } from './supportingTypes';
 

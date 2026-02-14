@@ -1,6 +1,12 @@
-import { Cell, Input, List } from '@telegram-apps/telegram-ui';
+import {
+  Cell,
+  IconButton,
+  Input,
+  List,
+  Section,
+} from '@telegram-apps/telegram-ui';
 import styles from './SelectSubstep.module.css';
-import { ChevronRight, Search, Trash } from 'lucide-react';
+import { ChevronRight, Search, XCircle } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 interface SelectSubstepProps {
@@ -16,46 +22,74 @@ export const SelectSubstep = ({
   options,
   header,
   placeholder,
-
   onClear,
   onSelect,
 }: SelectSubstepProps) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const foundOptions = useMemo(() => {
-    return options?.filter((o) =>
-      o.loweredLabel.includes(searchQuery.toLowerCase()),
-    );
+    const query = searchQuery.toLowerCase();
+    return options?.filter((o) => o.loweredLabel.includes(query));
   }, [searchQuery, options]);
 
   return (
     <>
-      <Input
-        before={<Search size={20} />}
-        header={header}
-        placeholder={placeholder}
-        className="inputField"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-      />
+      {/* Поиск выносим отдельно */}
+      <Section header={header}>
+        <Input
+          before={<Search size={20} color="var(--tgui--subtitle_text_color)" />}
+          after={
+            searchQuery && (
+              <IconButton
+                mode="bezeled"
+                size="s"
+                onClick={() => setSearchQuery('')}
+              >
+                <XCircle size={16} />
+              </IconButton>
+            )
+          }
+          placeholder={placeholder}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="input"
+        />
+      </Section>
+
       <List className={styles.list}>
-        <Cell
-          onClick={onClear}
-          className={styles.clearCell}
-          after={<Trash size={20} />}
-        >
-          Сбросить
-        </Cell>
-        {foundOptions.map((o) => (
+        {/* Кнопка сброса только если что-то выбрано (логическое условие) */}
+        <Section>
           <Cell
-            onClick={() => onSelect({ value: o.value, label: o.label })}
-            after={<ChevronRight size={20} />}
-            key={o.value}
-            className={styles.cell}
+            onClick={onClear}
+            className={styles.clearCell}
+            before={
+              <XCircle size={20} color="var(--tgui--destructive_text_color)" />
+            }
           >
-            {o.label}
+            <span style={{ color: 'var(--tgui--destructive_text_color)' }}>
+              Сбросить выбор
+            </span>
           </Cell>
-        ))}
+        </Section>
+
+        {/* Результаты поиска в отдельной секции */}
+        <Section header={`${foundOptions.length} доступно`}>
+          {foundOptions.map((o) => (
+            <Cell
+              key={o.value}
+              onClick={() => onSelect({ value: o.value, label: o.label })}
+              after={
+                <ChevronRight
+                  size={20}
+                  color="var(--tgui--subtitle_text_color)"
+                />
+              }
+              multiline
+            >
+              {o.label}
+            </Cell>
+          ))}
+        </Section>
       </List>
     </>
   );

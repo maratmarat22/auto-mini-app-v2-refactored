@@ -1,7 +1,7 @@
 import { Caption, Headline } from '@telegram-apps/telegram-ui';
 import styles from './Header.module.css';
-import { useWizardStore } from '../../model/store';
-import { STEPS_CONFIG } from '../../model/stepsConfig';
+import { useWizardStore } from '../../model/store/store';
+import { STEPS_CONFIG } from '../../model/configs/stepsConfig';
 
 export const WizardHeader = () => {
   const { stepIndex } = useWizardStore();

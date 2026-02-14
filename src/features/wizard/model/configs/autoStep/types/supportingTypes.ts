@@ -1,4 +1,4 @@
-import type { AutoState } from '../store';
+import type { AutoState } from '../../../store/types/store';
 
 export type AutoSubstepGroup = 'specific' | 'abstract';
 

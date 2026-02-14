@@ -1,4 +1,4 @@
-import type { AutoState } from '../store';
+import type { AutoState } from '../../../store/types/store';
 import {
   isAutoProp,
   isAutoStepGroup,

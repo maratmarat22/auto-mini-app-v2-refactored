@@ -24,9 +24,13 @@ export type PrevButtonAction =
   | 'prev'
   | 'reset'
   | 'retry'
-  | 'exitSubstep'
+  | 'closeSubstep'
   | null;
-export type NextButtonAction = 'next' | 'submit' | 'exit';
+export type NextButtonAction =
+  | 'next'
+  | 'submit'
+  | 'closeApp'
+  | 'confirmSubstep';
 
 interface StepSchema {
   id: WizardStepId;
@@ -56,6 +60,8 @@ interface StepSchema {
   prevButtonActionAlt?: PrevButtonAction;
 
   nextButtonAction: NextButtonAction;
+
+  hint?: string;
 }
 
 export const STEPS_CONFIG: StepSchema[] = [
@@ -98,6 +104,8 @@ export const STEPS_CONFIG: StepSchema[] = [
 
     prevButtonAction: 'prev',
     nextButtonAction: 'next',
+
+    hint: 'Не нашли нужное поле? Уточните детали в комментарии далее',
   },
   {
     id: WIZARD_STEP.COMMENT,
@@ -187,6 +195,6 @@ export const STEPS_CONFIG: StepSchema[] = [
     prevButtonAction: 'reset',
     prevButtonActionAlt: 'retry',
 
-    nextButtonAction: 'exit',
+    nextButtonAction: 'closeApp',
   },
 ];

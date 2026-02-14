@@ -1,4 +1,4 @@
-import { WIZARD_STEP, type WizardStepId } from '../model/stepsConfig';
+import { WIZARD_STEP, type WizardStepId } from '../model/configs/stepsConfig';
 import { AutoStep } from './steps/AutoStep/AutoStep';
 import { BudgetCityStep } from './steps/BudgetCityStep/BudgetCityStep';
 import { CommentStep } from './steps/CommentStep/CommentStep';

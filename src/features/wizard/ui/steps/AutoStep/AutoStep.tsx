@@ -1,18 +1,25 @@
 import { Menu } from './components/Menu/Menu';
-import { useWizardStore } from '@/features/wizard/model/store';
+import { useWizardStore } from '@/features/wizard/model/store/store';
 import { SelectSubstep } from './components/SelectSubstep/SelectSubstep';
 import { useAutoQueries } from '../../../hooks/useAutoQueries';
 import { Spinner } from '@telegram-apps/telegram-ui';
-import { SUBSTEPS_CONFIG } from '../../../model/AutoSubstepsConfig';
+import { SUBSTEPS_CONFIG } from '../../../model/configs/autoStep/autoSubstepsConfig';
 import { useMenu } from '../../../hooks/useMenu';
-import type { AutoState } from '@/features/wizard/model/types/store';
-import { useCallback, useMemo } from 'react';
+import type { AutoState } from '@/features/wizard/model/store/types/store';
+import { useMemo } from 'react';
 import { useAutoState } from '../../../hooks/useAutoState';
-import { isAutoSelectSubstepConfig } from '@/features/wizard/model/types/AutoSubstepConfigs/select';
-import { isAutoEntityArray } from '@/features/wizard/model/types/autoEntity';
+import { isAutoSelectSubstepConfig } from '@/features/wizard/model/configs/autoStep/types/select';
+import { isAutoRangeSubstepConfig } from '@/features/wizard/model/configs/autoStep/types/range';
+import { RangeSubstep } from './components/RangeSubstep/RangeSubstep';
+import {
+  isAutoEntityArray,
+  type RangeLimit,
+} from '@/features/wizard/model/store/types/entities';
 
 export const AutoStep = () => {
-  const onSubstep = useWizardStore((store) => store.onSubstep);
+  const onSelectSubstep = useWizardStore((store) => store.onSelectSubstep);
+  const rangeSubstepBuffer = useWizardStore((s) => s.rangeSubstepBuffer);
+  const onRangeSubstep = useWizardStore((s) => s.onRangeSubstep);
   const updateState = useWizardStore((store) => store.updateState);
   const autoState: AutoState = useAutoState();
 
@@ -22,7 +29,7 @@ export const AutoStep = () => {
   const config = SUBSTEPS_CONFIG.find((c) => c.prop === menu.substep);
 
   const mappedOptions = useMemo(() => {
-    if (!onSubstep || !isAutoSelectSubstepConfig(config)) return [];
+    if (!onSelectSubstep || !isAutoSelectSubstepConfig(config)) return [];
 
     const options = queries[config.dataKey];
     if (!isAutoEntityArray(options)) return [];
@@ -32,35 +39,29 @@ export const AutoStep = () => {
       label: o.name,
       loweredLabel: o.name.toLowerCase(),
     }));
-  }, [onSubstep, config, queries]);
+  }, [onSelectSubstep, config, queries]);
 
-  const handleClear = useCallback(() => {
-    if (!isAutoSelectSubstepConfig(config)) return;
-
-    updateState({
-      [config.prop]: null,
-      lastActionClear: true,
-    });
-
-    menu.handleSubstepChange(null);
-  }, [config, updateState, menu]);
-
-  const handleSelect = useCallback(
-    (newValue: { value: string; label: string }) => {
+  if (onSelectSubstep && isAutoSelectSubstepConfig(config)) {
+    const handleSelect = (newValue: { value: string; label: string }) => {
       if (!isAutoSelectSubstepConfig(config)) return;
 
       updateState({
         [config.prop]: { id: newValue.value, name: newValue.label },
-        onSubstep: false,
         lastActionClear: false,
+        onSelectSubstep: false,
+        onRangeSubstep: false,
       });
-      menu.handleSubstepChange(null);
-    },
-    [config, updateState, menu],
-  );
+    };
+    const handleClear = () => {
+      if (!isAutoSelectSubstepConfig(config)) return;
 
-  if (onSubstep) {
-    if (!isAutoSelectSubstepConfig(config)) return null;
+      updateState({
+        [config.prop]: null,
+        lastActionClear: true,
+        onSelectSubstep: false,
+        onRangeSubstep: false,
+      });
+    };
 
     const isLoading = queries[config.loadingKey];
     if (isLoading) {
@@ -74,6 +75,24 @@ export const AutoStep = () => {
         placeholder={config.placeholder}
         onClear={handleClear}
         onSelect={handleSelect}
+      />
+    );
+  } else if (onRangeSubstep && isAutoRangeSubstepConfig(config)) {
+    const handleInputChange = (limit: RangeLimit, value: string) =>
+      updateState({
+        rangeSubstepBuffer: {
+          from: null,
+          to: null,
+          ...rangeSubstepBuffer,
+          [limit]: value,
+        },
+      });
+
+    return (
+      <RangeSubstep
+        onInputChange={handleInputChange}
+        placeholderFrom="1"
+        placeholderTo="1"
       />
     );
   }

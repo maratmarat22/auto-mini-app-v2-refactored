@@ -1,0 +1,15 @@
+.inputsWrapper {
+  width: 80%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.input {
+  width: 100% !important;
+}
+
+.line {
+  color: var(--outline);
+  font-weight: bolder;
+}
